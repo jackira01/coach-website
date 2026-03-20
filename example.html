@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coaching — Tu Camino a Challenger</title>
+
+<script type="importmap">
+{
+  "imports": {
+    "react":              "https://esm.sh/react@18.2.0",
+    "react/jsx-runtime":  "https://esm.sh/react@18.2.0/jsx-runtime",
+    "react-dom":          "https://esm.sh/react-dom@18.2.0",
+    "react-dom/client":   "https://esm.sh/react-dom@18.2.0/client",
+    "three":              "https://esm.sh/three@0.155.0",
+    "@react-three/fiber": "https://esm.sh/@react-three/fiber@8.15.12?deps=react@18.2.0,three@0.155.0",
+    "@react-three/drei":  "https://esm.sh/@react-three/drei@9.80.0?deps=react@18.2.0,three@0.155.0,@react-three/fiber@8.15.12"
+  }
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Barlow+Condensed:wght@400;700;800;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  width: 100%; height: 100%;
+  background: #03060f;
+  color: #fff;
+  font-family: 'Barlow', sans-serif;
+  overflow-x: hidden;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  height: 68px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 52px;
+  background: linear-gradient(180deg, rgba(3,6,15,.9) 0%, transparent 100%);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(100,140,255,.07);
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 12px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.2rem; font-weight: 700; letter-spacing: 3px;
+  color: #c8d8f0; text-decoration: none; text-transform: uppercase;
+}
+.logo-hex {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, #5a8fd6, #3a5fa0);
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 1.2rem; color: #fff;
+  box-shadow: 0 0 18px rgba(90,143,214,.6);
+}
+.nav-links { display: flex; gap: 44px; list-style: none; }
+.nav-links a {
+  color: rgba(255,255,255,.65);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: .9rem; font-weight: 600; letter-spacing: 2px;
+  text-transform: uppercase; text-decoration: none;
+  transition: color .25s;
+}
+.nav-links a:hover { color: #fff; }
+
+/* ── HERO ── */
+.hero {
+  position: relative; width: 100%; min-height: 100vh;
+  display: grid; grid-template-columns: 1fr 1fr;
+  align-items: center; padding-top: 68px; overflow: hidden;
+}
+
+/* ── TEXT ── */
+.hero-text {
+  position: relative; z-index: 10;
+  padding: 0 0 0 52px;
+  opacity: 0;
+  animation: textReveal 1s cubic-bezier(.22,1,.36,1) .3s forwards;
+}
+@keyframes textReveal {
+  from { opacity: 0; transform: translateX(-32px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.eyebrow {
+  display: flex; align-items: center; gap: 12px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: .78rem; letter-spacing: 4px; text-transform: uppercase;
+  color: #5a9ef0; margin-bottom: 22px;
+}
+.eyebrow::before { content: ''; width: 28px; height: 1px; background: #5a9ef0; }
+h1 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(2.6rem, 4.5vw, 4.2rem);
+  font-weight: 900; line-height: 1.0; text-transform: uppercase;
+  margin-bottom: 26px;
+}
+h1 .white { color: #dce8ff; }
+h1 .grad {
+  background: linear-gradient(90deg, #7db8ff, #b48af7, #e879f9);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.desc {
+  font-size: 1.02rem; line-height: 1.8;
+  color: rgba(180,200,240,.72);
+  max-width: 430px; margin-bottom: 42px;
+}
+.ctas { display: flex; gap: 14px; flex-wrap: wrap; }
+.btn-p {
+  padding: 13px 32px;
+  background: linear-gradient(135deg, #3a68c0, #7c3aed);
+  color: #fff; border: none; cursor: pointer;
+  font-family: 'Rajdhani', sans-serif; font-size: .95rem;
+  font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  box-shadow: 0 0 28px rgba(124,58,237,.45);
+  transition: filter .25s, transform .2s;
+}
+.btn-p:hover { filter: brightness(1.2); transform: translateY(-2px); }
+.btn-s {
+  padding: 13px 28px; background: transparent;
+  color: rgba(190,210,255,.8);
+  border: 1px solid rgba(130,170,255,.3); cursor: pointer;
+  font-family: 'Rajdhani', sans-serif; font-size: .95rem;
+  font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  transition: border-color .25s, color .25s;
+}
+.btn-s:hover { border-color: #8ab4f8; color: #fff; }
+
+/* ── R3F MOUNT ── */
+#r3f-root {
+  position: relative; width: 100%; height: 100vh;
+  overflow: hidden;
+}
+
+/* ── STATS ── */
+.stats {
+  position: relative; z-index: 10;
+  display: flex; justify-content: center;
+  border-top: 1px solid rgba(80,110,200,.1);
+}
+.stat {
+  flex: 1; max-width: 240px;
+  padding: 32px 36px; text-align: center;
+  border-right: 1px solid rgba(80,110,200,.1);
+  opacity: 0; animation: fadeUp .8s ease forwards;
+}
+.stat:last-child { border-right: none; }
+.stat-n {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 2.8rem; font-weight: 900;
+  background: linear-gradient(135deg, #7db8ff, #b48af7);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; margin-bottom: 6px;
+}
+.stat-l {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: .78rem; letter-spacing: 2px;
+  color: rgba(160,190,240,.5); text-transform: uppercase;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── BACKGROUND ── */
+.nebula {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 55% 55% at 75% 35%, rgba(60,30,120,.36) 0%, transparent 70%),
+    radial-gradient(ellipse 45% 65% at 20% 75%, rgba(10,30,90,.38) 0%, transparent 70%),
+    radial-gradient(ellipse 35% 40% at 85% 85%, rgba(20,8,60,.28) 0%, transparent 70%);
+}
+#starfield { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+.rune-bg { position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+.rune { position: absolute; opacity: .07; animation: runeDrift linear infinite; }
+.rune svg { fill: #90b4e8; }
+@keyframes runeDrift {
+  0%   { transform: translateY(0) rotate(0deg); opacity: .05; }
+  50%  { opacity: .13; }
+  100% { transform: translateY(-35px) rotate(18deg); opacity: .05; }
+}
+
+/* Loading indicator */
+#r3f-loading {
+  position: absolute; inset: 0; z-index: 5;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: .85rem; letter-spacing: 3px; text-transform: uppercase;
+  color: rgba(100,160,255,.5);
+  pointer-events: none;
+  transition: opacity .5s;
+}
+</style>
+</head>
+<body>
+
+<canvas id="starfield"></canvas>
+<div class="nebula"></div>
+<div class="rune-bg" id="runeBg"></div>
+
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="logo-hex">C</div>
+    Coaching
+  </a>
+  <ul class="nav-links">
+    <li><a href="#">Servicios</a></li>
+    <li><a href="#">Precios</a></li>
+    <li><a href="#">Sobre Nosotros</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <div class="hero-text">
+    <div class="eyebrow">League of Legends Coaching</div>
+    <h1>
+      <span class="white">Tu Camino a<br>Challenger Con El</span><br>
+      <span class="grad">Mejor Coaching</span>
+    </h1>
+    <p class="desc">Mejora tus mecánicas, visión de juego y mentalidad con planes de entrenamiento personalizados. Lleva tu juego al siguiente nivel y deja de estar estancado.</p>
+    <div class="ctas">
+      <button class="btn-p">Comenzar Ahora</button>
+      <button class="btn-s">Ver Servicios</button>
+    </div>
+  </div>
+
+  <div id="r3f-root">
+    <div id="r3f-loading">Cargando escena 3D…</div>
+  </div>
+</section>
+
+<section class="stats">
+  <div class="stat" style="animation-delay:3.2s"><div class="stat-n">500+</div><div class="stat-l">Estudiantes Coached</div></div>
+  <div class="stat" style="animation-delay:3.4s"><div class="stat-n">92%</div><div class="stat-l">Tasa de Mejora</div></div>
+  <div class="stat" style="animation-delay:3.6s"><div class="stat-n">15+</div><div class="stat-l">Coaches Challenger</div></div>
+  <div class="stat" style="animation-delay:3.8s"><div class="stat-n">3.5K+</div><div class="stat-l">Horas de Sesión</div></div>
+</section>
+
+<!-- Vanilla JS: starfield + runes -->
+<script>
+(function(){
+  const c = document.getElementById('starfield');
+  const ctx = c.getContext('2d');
+  let W, H, stars = [];
+  const resize = () => { W = c.width = window.innerWidth; H = c.height = window.innerHeight; };
+  resize(); window.addEventListener('resize', resize);
+  for(let i = 0; i < 260; i++) stars.push({ x:Math.random(), y:Math.random(), r:Math.random()*1.4+.3, a:Math.random(), da:(Math.random()-.5)*.007 });
+  (function draw(){
+    ctx.clearRect(0,0,W,H);
+    stars.forEach(s => {
+      s.a = Math.max(.04, Math.min(1, s.a+s.da));
+      if(s.a<=.04||s.a>=1) s.da *= -1;
+      ctx.beginPath(); ctx.arc(s.x*W, s.y*H, s.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(200,220,255,${s.a*.75})`; ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  })();
+  const paths=['M12 2l3 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z','M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10S22 17.52 22 12 17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z','M12 2L2 19h20L12 2zm0 3l7 13H5z','M4 4l16 8-16 8V4zm2 3v10l10-5z','M8 2h8l4 4v12l-4 4H8l-4-4V6z','M2 12Q12 2 22 12Q12 22 2 12z'];
+  const bg = document.getElementById('runeBg');
+  for(let i=0;i<38;i++){
+    const d=document.createElement('div'); d.className='rune';
+    d.innerHTML=`<svg width="22" height="22" viewBox="0 0 24 24"><path d="${paths[i%paths.length]}"/></svg>`;
+    d.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;width:${Math.random()*16+13}px;animation-duration:${Math.random()*9+5}s;animation-delay:${Math.random()*7}s;`;
+    bg.appendChild(d);
+  }
+})();
+</script>
+
+<!-- React Three Fiber chart -->
+<script type="text/babel" data-presets="react" data-type="module">
+import React, { useRef, useMemo } from 'react';
+import { createRoot } from 'react-dom/client';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { Float } from '@react-three/drei';
+import * as THREE from 'three';
+
+// ─── Rank data ───
+const RANKS = [
+  { name:"Iron",        height:1.0, color:"#5c5146", emblemColor:"#8b7d6b", glowColor:"#7a6a5a" },
+  { name:"Bronze",      height:1.5, color:"#6b4c2a", emblemColor:"#cd7f32", glowColor:"#b06820" },
+  { name:"Silver",      height:2.0, color:"#7a8a99", emblemColor:"#c0c0c0", glowColor:"#9aaabb" },
+  { name:"Gold",        height:2.7, color:"#8b7320", emblemColor:"#ffd700", glowColor:"#d4a800" },
+  { name:"Platinum",    height:3.4, color:"#3a8a7a", emblemColor:"#00cba9", glowColor:"#20b090" },
+  { name:"Emerald",     height:4.2, color:"#1a6b3a", emblemColor:"#50c878", glowColor:"#30b060" },
+  { name:"Diamond",     height:5.1, color:"#2a5a9a", emblemColor:"#b9f2ff", glowColor:"#5090e0" },
+  { name:"Master",      height:6.0, color:"#6b2a8a", emblemColor:"#c77dff", glowColor:"#9040c0" },
+  { name:"Grandmaster", height:6.9, color:"#8a2a2a", emblemColor:"#ff6666", glowColor:"#cc3030" },
+  { name:"Challenger",  height:8.0, color:"#1a3a6a", emblemColor:"#00d4ff", glowColor:"#00d4ff" },
+];
+
+const BAR_W = 0.62;
+const BAR_D = 0.62;
+const BAR_GAP = 1.0;
+
+// ─── Galaxy shader material ───
+function useGalaxyMaterial(color, glowColor) {
+  return useMemo(() => new THREE.ShaderMaterial({
+    uniforms: {
+      uTime:  { value: 0 },
+      uColor: { value: new THREE.Color(color) },
+      uGlow:  { value: new THREE.Color(glowColor) },
+    },
+    vertexShader: `
+      varying vec3 vPosition;
+      varying vec3 vNormal;
+      varying vec2 vUv;
+      void main() {
+        vPosition = position;
+        vNormal = normal;
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform float uTime;
+      uniform vec3  uColor;
+      uniform vec3  uGlow;
+      varying vec3  vPosition;
+      varying vec3  vNormal;
+      varying vec2  vUv;
+
+      float hash(vec2 p) {
+        return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+      }
+      float noise(vec2 p) {
+        vec2 i = floor(p);
+        vec2 f = fract(p);
+        f = f * f * (3.0 - 2.0 * f);
+        float a = hash(i);
+        float b = hash(i + vec2(1.0, 0.0));
+        float c = hash(i + vec2(0.0, 1.0));
+        float d = hash(i + vec2(1.0, 1.0));
+        return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+      }
+
+      void main() {
+        vec2 uv = vUv * 3.5 + vPosition.xz * 0.6;
+        float n1 = noise(uv + uTime * 0.07);
+        float n2 = noise(uv * 2.1 - uTime * 0.11);
+        float n3 = noise(uv * 4.2 + uTime * 0.05);
+        float nebula = n1 * 0.5 + n2 * 0.35 + n3 * 0.15;
+
+        // Constellation dots
+        float star = step(0.975, hash(floor(vUv * 90.0)));
+        // Constellation lines (horizontal/diagonal patterns)
+        vec2 lineUv = fract(vUv * 6.0);
+        float line = step(0.96, noise(floor(vUv * 6.0)));
+
+        vec3 base   = uColor * 0.28;
+        vec3 neb    = mix(uColor * 0.8, uGlow * 1.1, nebula) * 0.65;
+        vec3 col    = base + neb;
+        col += star * vec3(0.9, 0.95, 1.0) * 0.85;
+        col += line * uGlow * 0.18;
+
+        // Fresnel edge glow
+        float fresnel = pow(1.0 - abs(dot(normalize(vNormal), vec3(0.0,0.0,1.0))), 2.2);
+        col += uGlow * fresnel * 0.55;
+
+        // Top face brightening
+        float topFace = max(0.0, dot(vNormal, vec3(0.0,1.0,0.0)));
+        col += uGlow * topFace * 0.25;
+
+        // Edge highlight (border glow)
+        vec2 edgeDist = min(vUv, 1.0 - vUv);
+        float edge = 1.0 - smoothstep(0.0, 0.04, min(edgeDist.x, edgeDist.y));
+        col += uGlow * edge * 0.7;
+
+        gl_FragColor = vec4(col, 0.93);
+      }
+    `,
+    transparent: true,
+    side: THREE.FrontSide,
+  }), []);
+}
+
+// ─── Galactic Bar ───
+function GalacticBar({ rank, index }) {
+  const meshRef = useRef(null);
+  const mat = useGalaxyMaterial(rank.color, rank.glowColor);
+
+  // stagger in Z for isometric staircase look
+  const xPos = index * BAR_GAP - (RANKS.length - 1) * BAR_GAP / 2;
+  const zPos = -index * 0.22;
+
+  useFrame(({ clock }) => {
+    const t = clock.getElapsedTime();
+    if (meshRef.current) {
+      const delay = index * 0.28;
+      const progress = Math.min(1, Math.max(0, (t - delay) / 1.4));
+      const eased = 1 - Math.pow(1 - progress, 3);
+      meshRef.current.scale.y = Math.max(0.001, eased);
+      meshRef.current.position.y = (rank.height * eased) / 2;
+    }
+    mat.uniforms.uTime.value = t;
+  });
+
+  return (
+    <group position={[xPos, 0, zPos]}>
+      <mesh ref={meshRef} position={[0, rank.height / 2, 0]}>
+        <boxGeometry args={[BAR_W, rank.height, BAR_D]} />
+        <primitive object={mat} attach="material" />
+      </mesh>
+
+      {/* Bottom label */}
+      <mesh position={[0, -0.05, 0]} rotation={[-Math.PI/2, 0, 0]}>
+        <planeGeometry args={[BAR_W, 0.3]} />
+        <meshBasicMaterial transparent opacity={0} />
+      </mesh>
+    </group>
+  );
+}
+
+// ─── Rank label (canvas sprite) ───
+function RankLabel({ rank, index }) {
+  const spriteRef = useRef(null);
+  const xPos = index * BAR_GAP - (RANKS.length - 1) * BAR_GAP / 2;
+  const zPos = -index * 0.22;
+
+  const texture = useMemo(() => {
+    const cv = document.createElement('canvas');
+    cv.width = 128; cv.height = 36;
+    const ctx = cv.getContext('2d');
+    ctx.clearRect(0,0,128,36);
+    ctx.font = 'bold 16px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = rank.emblemColor;
+    ctx.globalAlpha = 0.85;
+    ctx.fillText(rank.name.toUpperCase(), 64, 22);
+    const t = new THREE.CanvasTexture(cv);
+    return t;
+  }, []);
+
+  useFrame(({ clock }) => {
+    if (spriteRef.current) {
+      const t = clock.getElapsedTime();
+      const delay = index * 0.28;
+      const progress = Math.min(1, Math.max(0, (t - delay - 1.2) / 0.5));
+      spriteRef.current.material.opacity = progress;
+    }
+  });
+
+  return (
+    <sprite ref={spriteRef} position={[xPos, -0.55, zPos]} scale={[1.2, 0.35, 1]}>
+      <spriteMaterial map={texture} transparent opacity={0} depthWrite={false} />
+    </sprite>
+  );
+}
+
+// ─── Rank Emblem ───
+function RankEmblem({ rank, index }) {
+  const groupRef = useRef(null);
+  const xPos = index * BAR_GAP - (RANKS.length - 1) * BAR_GAP / 2;
+  const zPos = -index * 0.22;
+  const isChallenger = index === RANKS.length - 1;
+
+  useFrame(({ clock }) => {
+    if (groupRef.current) {
+      const t = clock.getElapsedTime();
+      const delay = index * 0.28 + 1.2;
+      const progress = Math.min(1, Math.max(0, (t - delay) / 0.6));
+      groupRef.current.visible = progress > 0;
+      const s = 1 - Math.pow(1 - Math.min(progress * 1.2, 1), 3);
+      groupRef.current.scale.setScalar(s);
+    }
+  });
+
+  return (
+    <group ref={groupRef} position={[xPos, rank.height + 0.55, zPos]}>
+      <Float speed={1.8} rotationIntensity={0} floatIntensity={0.35} floatingRange={[-0.12, 0.12]}>
+        {/* Central gem */}
+        <mesh>
+          <octahedronGeometry args={[isChallenger ? 0.22 : 0.16, 0]} />
+          <meshStandardMaterial
+            color={rank.emblemColor}
+            emissive={rank.emblemColor}
+            emissiveIntensity={isChallenger ? 2.0 : 0.8}
+            metalness={0.85}
+            roughness={0.15}
+            transparent
+            opacity={0.96}
+          />
+        </mesh>
+
+        {/* Left wing */}
+        <mesh position={[-0.26, 0.03, 0]} rotation={[0, 0, Math.PI / 5]}>
+          <planeGeometry args={[0.25, 0.1]} />
+          <meshStandardMaterial
+            color={rank.emblemColor}
+            emissive={rank.emblemColor}
+            emissiveIntensity={0.5}
+            transparent opacity={0.75}
+            side={THREE.DoubleSide}
+          />
+        </mesh>
+
+        {/* Right wing */}
+        <mesh position={[0.26, 0.03, 0]} rotation={[0, 0, -Math.PI / 5]}>
+          <planeGeometry args={[0.25, 0.1]} />
+          <meshStandardMaterial
+            color={rank.emblemColor}
+            emissive={rank.emblemColor}
+            emissiveIntensity={0.5}
+            transparent opacity={0.75}
+            side={THREE.DoubleSide}
+          />
+        </mesh>
+
+        {/* Inner glow ring for challenger */}
+        {isChallenger && (
+          <mesh rotation={[Math.PI/2, 0, 0]}>
+            <torusGeometry args={[0.28, 0.025, 8, 32]} />
+            <meshStandardMaterial
+              color="#00d4ff"
+              emissive="#00d4ff"
+              emissiveIntensity={3}
+              transparent opacity={0.8}
+            />
+          </mesh>
+        )}
+
+        <pointLight
+          color={rank.emblemColor}
+          intensity={isChallenger ? 4 : 1.2}
+          distance={isChallenger ? 5 : 2.5}
+        />
+      </Float>
+    </group>
+  );
+}
+
+// ─── Challenger particles ───
+function ChallengerParticles() {
+  const ref = useRef(null);
+  const count = 150;
+  const challX = (RANKS.length - 1) * BAR_GAP - (RANKS.length - 1) * BAR_GAP / 2;
+  const challZ = -(RANKS.length - 1) * 0.22;
+
+  const [positions, velocities] = useMemo(() => {
+    const pos = new Float32Array(count * 3);
+    const vel = [];
+    for (let i = 0; i < count; i++) {
+      pos[i*3]   = (Math.random() - 0.5) * 1.0;
+      pos[i*3+1] = Math.random() * RANKS[RANKS.length-1].height;
+      pos[i*3+2] = (Math.random() - 0.5) * 1.0;
+      vel.push({
+        vx: (Math.random() - 0.5) * 0.006,
+        vy: Math.random() * 0.022 + 0.006,
+        vz: (Math.random() - 0.5) * 0.006,
+      });
+    }
+    return [pos, vel];
+  }, []);
+
+  useFrame(() => {
+    if (!ref.current) return;
+    const arr = ref.current.geometry.attributes.position.array;
+    for (let i = 0; i < count; i++) {
+      arr[i*3]   += velocities[i].vx;
+      arr[i*3+1] += velocities[i].vy;
+      arr[i*3+2] += velocities[i].vz;
+      if (arr[i*3+1] > RANKS[RANKS.length-1].height + 1.5) {
+        arr[i*3]   = (Math.random() - 0.5) * 0.8;
+        arr[i*3+1] = 0;
+        arr[i*3+2] = (Math.random() - 0.5) * 0.8;
+      }
+    }
+    ref.current.geometry.attributes.position.needsUpdate = true;
+  });
+
+  return (
+    <points ref={ref} position={[challX, 0, challZ]}>
+      <bufferGeometry>
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+      </bufferGeometry>
+      <pointsMaterial
+        size={0.055} color="#ffd700"
+        transparent opacity={0.85}
+        sizeAttenuation
+        blending={THREE.AdditiveBlending}
+        depthWrite={false}
+      />
+    </points>
+  );
+}
+
+// ─── Background stars ───
+function BackgroundStars() {
+  const ref = useRef(null);
+  const positions = useMemo(() => {
+    const arr = new Float32Array(600 * 3);
+    for (let i = 0; i < 600; i++) {
+      arr[i*3]   = (Math.random() - 0.5) * 50;
+      arr[i*3+1] = (Math.random() - 0.5) * 25;
+      arr[i*3+2] = -6 - Math.random() * 22;
+    }
+    return arr;
+  }, []);
+
+  useFrame(({ clock }) => {
+    if (ref.current) ref.current.rotation.y = clock.getElapsedTime() * 0.004;
+  });
+
+  return (
+    <points ref={ref}>
+      <bufferGeometry>
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+      </bufferGeometry>
+      <pointsMaterial
+        size={0.035} color="#ffffff"
+        transparent opacity={0.55}
+        sizeAttenuation
+        blending={THREE.AdditiveBlending}
+        depthWrite={false}
+      />
+    </points>
+  );
+}
+
+// ─── Floating rune particles ───
+function FloatingRunes() {
+  const ref = useRef(null);
+  const positions = useMemo(() => {
+    const arr = new Float32Array(80 * 3);
+    for (let i = 0; i < 80; i++) {
+      arr[i*3]   = (Math.random() - 0.5) * 35;
+      arr[i*3+1] = (Math.random() - 0.5) * 18;
+      arr[i*3+2] = -2 - Math.random() * 12;
+    }
+    return arr;
+  }, []);
+
+  useFrame(({ clock }) => {
+    if (ref.current) ref.current.rotation.z = Math.sin(clock.getElapsedTime() * 0.08) * 0.015;
+  });
+
+  return (
+    <points ref={ref}>
+      <bufferGeometry>
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+      </bufferGeometry>
+      <pointsMaterial
+        size={0.09} color="#4a6a9a"
+        transparent opacity={0.22}
+        sizeAttenuation
+        blending={THREE.AdditiveBlending}
+        depthWrite={false}
+      />
+    </points>
+  );
+}
+
+// ─── Base platform ───
+function BasePlatform() {
+  const meshRef = useRef(null);
+  const mat = useMemo(() => new THREE.ShaderMaterial({
+    uniforms: { uTime: { value: 0 } },
+    vertexShader: `
+      varying vec2 vUv;
+      void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }
+    `,
+    fragmentShader: `
+      uniform float uTime;
+      varying vec2 vUv;
+      void main() {
+        vec2 grid = abs(fract(vUv * 16.0 - 0.5) - 0.5) / fwidth(vUv * 16.0);
+        float line = min(grid.x, grid.y);
+        float g = 1.0 - min(line, 1.0);
+        float pulse = 0.5 + 0.5 * sin(uTime * 0.8 + length(vUv - 0.5) * 8.0);
+        vec3 col = vec3(0.1, 0.25, 0.5) * g * (0.6 + pulse * 0.3);
+        float fade = 1.0 - smoothstep(0.3, 0.5, length(vUv - 0.5));
+        gl_FragColor = vec4(col, g * 0.55 * fade);
+      }
+    `,
+    transparent: true,
+    side: THREE.DoubleSide,
+    extensions: { derivatives: true },
+  }), []);
+
+  useFrame(({ clock }) => { mat.uniforms.uTime.value = clock.getElapsedTime(); });
+
+  return (
+    <mesh ref={meshRef} rotation={[-Math.PI/2, 0, 0]} position={[0, -0.02, 0]}>
+      <planeGeometry args={[18, 8, 1, 1]} />
+      <primitive object={mat} attach="material" />
+    </mesh>
+  );
+}
+
+// ─── Scene ───
+function Scene() {
+  return (
+    <>
+      <ambientLight intensity={0.25} color="#1a2a4a" />
+      <directionalLight position={[6, 10, 6]} intensity={0.7} color="#8fa8c8" castShadow />
+      <directionalLight position={[-4, 6, -4]} intensity={0.25} color="#4a3a6a" />
+      <pointLight position={[6, 8, 3]} intensity={0.6} color="#00d4ff" distance={20} />
+      <pointLight position={[-4, 4, 2]} intensity={0.4} color="#9060ff" distance={16} />
+
+      <BackgroundStars />
+      <FloatingRunes />
+      <BasePlatform />
+
+      {RANKS.map((rank, i) => (
+        <GalacticBar key={rank.name} rank={rank} index={i} />
+      ))}
+      {RANKS.map((rank, i) => (
+        <RankLabel key={`lbl-${rank.name}`} rank={rank} index={i} />
+      ))}
+      {RANKS.map((rank, i) => (
+        <RankEmblem key={`emb-${rank.name}`} rank={rank} index={i} />
+      ))}
+      <ChallengerParticles />
+    </>
+  );
+}
+
+// ─── Root component ───
+function RankChart3D() {
+  return (
+    <div style={{ width:'100%', height:'100%', position:'absolute', inset:0 }}>
+      <Canvas
+        camera={{ position:[3, 5.5, 13], fov:42, near:0.1, far:100 }}
+        gl={{
+          antialias: true,
+          alpha: true,
+          toneMapping: THREE.ACESFilmicToneMapping,
+          toneMappingExposure: 1.25,
+        }}
+        style={{ background:'transparent' }}
+        onCreated={() => {
+          const el = document.getElementById('r3f-loading');
+          if (el) el.style.opacity = '0';
+          setTimeout(() => { if (el) el.remove(); }, 600);
+        }}
+      >
+        <Scene />
+      </Canvas>
+    </div>
+  );
+}
+
+createRoot(document.getElementById('r3f-root')).render(
+  React.createElement(RankChart3D)
+);
+</script>
+
+</body>
+</html>
