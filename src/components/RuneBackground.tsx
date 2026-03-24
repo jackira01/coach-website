@@ -20,11 +20,13 @@ export default function RuneBackground() {
 
         for (let i = 0; i < 38; i++) {
             const div = document.createElement("div");
-            div.className = "rune";
             const path = RUNE_PATHS[i % RUNE_PATHS.length];
-            div.innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24"><path d="${path}"/></svg>`;
+            div.innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24"><path fill="#90b4e8" d="${path}"/></svg>`;
             const size = Math.random() * 16 + 13;
             div.style.cssText = `
+        position: absolute;
+        opacity: 0.07;
+        animation: runeDrift linear infinite;
         left:${Math.random() * 100}%;
         top:${Math.random() * 100}%;
         width:${size}px;
@@ -42,13 +44,7 @@ export default function RuneBackground() {
     return (
         <div
             ref={containerRef}
-            style={{
-                position: "fixed",
-                inset: 0,
-                zIndex: 1,
-                pointerEvents: "none",
-                overflow: "hidden",
-            }}
+            className="fixed inset-0 z-[1] pointer-events-none overflow-hidden"
         />
     );
 }

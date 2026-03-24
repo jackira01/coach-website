@@ -1,11 +1,6 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { fontPrimary, fontSecondary } from "@/config/fonts";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Coaching LoL — Tu Camino a Challenger",
@@ -19,7 +14,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={geistSans.variable}>
+    <html
+      lang="es"
+      className={`${fontPrimary.variable} ${fontSecondary.variable}`}
+    >
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -28,7 +26,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="bg-[#03060f] text-white">{children}</body>
+      <body className="bg-[#faf8ff] text-[#0d0820] font-primary">{children}</body>
     </html>
   );
 }

@@ -1,134 +1,38 @@
 "use client";
 
-export default function HeroText() {
+export default function HeroText({ className = "" }) {
   return (
-    <div
-      style={{
-        position: "relative",
-        zIndex: 10,
-        padding: "0 0 0 52px",
-        opacity: 0,
-        animation: "textReveal 1s cubic-bezier(.22,1,.36,1) .3s forwards",
-      }}
-    >
+    <div className={`relative z-10 opacity-0 animate-[textReveal_1s_cubic-bezier(.22,1,.36,1)_.3s_forwards] ${className}`}>
       {/* Eyebrow */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "12px",
-          fontFamily: "var(--font-rajdhani), Rajdhani, sans-serif",
-          fontSize: ".78rem",
-          letterSpacing: "4px",
-          textTransform: "uppercase",
-          color: "#5a9ef0",
-          marginBottom: "22px",
-        }}
-      >
-        <span style={{ width: "28px", height: "1px", background: "#5a9ef0", display: "inline-block" }} />
+      <div className="flex items-center gap-3 font-primary text-[.78rem] tracking-[4px] uppercase text-violet-600 mb-5.5">
+        <span className="w-7 h-px bg-violet-600 inline-block" />
         League of Legends Coaching
       </div>
 
       {/* H1 */}
-      <h1
-        style={{
-          fontFamily: "var(--font-barlow-condensed), 'Barlow Condensed', sans-serif",
-          fontSize: "clamp(2.6rem, 4.5vw, 4.2rem)",
-          fontWeight: 900,
-          lineHeight: 1.0,
-          textTransform: "uppercase",
-          marginBottom: "26px",
-        }}
-      >
-        <span style={{ color: "#dce8ff" }}>
+      <h1 className="font-primary text-[clamp(2.6rem,4.5vw,4.2rem)] font-black leading-none uppercase mb-6.5">
+        <span className="text-[#0d0820]">
           Tu Camino a<br />Challenger Con El
         </span>
         <br />
-        <span
-          style={{
-            background: "linear-gradient(90deg, #7db8ff, #b48af7, #e879f9)",
-            WebkitBackgroundClip: "text",
-            backgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-          }}
-        >
+        <span className="bg-linear-to-r from-violet-700 via-blue-500 to-cyan-500 bg-clip-text text-transparent">
           Mejor Coaching
         </span>
       </h1>
 
       {/* Description */}
-      <p
-        style={{
-          fontSize: "1.02rem",
-          lineHeight: 1.8,
-          color: "rgba(180,200,240,.72)",
-          maxWidth: "430px",
-          marginBottom: "42px",
-          fontFamily: "var(--font-barlow), Barlow, sans-serif",
-        }}
-      >
+      <p className="font-primary text-[1.02rem] leading-[1.8] text-[rgba(45,25,80,.65)] max-w-107.5 mb-10.5">
         Mejora tus mec&aacute;nicas, visi&oacute;n de juego y mentalidad con planes de
         entrenamiento personalizados. Lleva tu juego al siguiente nivel y deja
         de estar estancado.
       </p>
 
       {/* CTAs */}
-      <div style={{ display: "flex", gap: "14px", flexWrap: "wrap" }}>
-        <button
-          style={{
-            padding: "13px 32px",
-            background: "linear-gradient(135deg, #3a68c0, #7c3aed)",
-            color: "#fff",
-            border: "none",
-            cursor: "pointer",
-            fontFamily: "var(--font-rajdhani), Rajdhani, sans-serif",
-            fontSize: ".95rem",
-            fontWeight: 700,
-            letterSpacing: "2px",
-            textTransform: "uppercase",
-            clipPath: "polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%)",
-            boxShadow: "0 0 28px rgba(124,58,237,.45)",
-            transition: "filter .25s, transform .2s",
-          }}
-          onMouseEnter={(e) => {
-            const el = e.currentTarget;
-            el.style.filter = "brightness(1.2)";
-            el.style.transform = "translateY(-2px)";
-          }}
-          onMouseLeave={(e) => {
-            const el = e.currentTarget;
-            el.style.filter = "";
-            el.style.transform = "";
-          }}
-        >
+      <div className="flex gap-3.5 flex-wrap">
+        <button className="px-8 py-3.25 bg-linear-to-br from-[#3a68c0] to-violet-600 text-white border-none cursor-pointer font-primary text-[.95rem] font-bold tracking-[2px] uppercase [clip-path:polygon(8px_0%,100%_0%,calc(100%-8px)_100%,0%_100%)] shadow-[0_0_28px_rgba(124,58,237,.45)] transition-[filter,transform] duration-250 hover:brightness-125 hover:-translate-y-0.5">
           Comenzar Ahora
         </button>
-        <button
-          style={{
-            padding: "13px 28px",
-            background: "transparent",
-            color: "rgba(190,210,255,.8)",
-            border: "1px solid rgba(130,170,255,.3)",
-            cursor: "pointer",
-            fontFamily: "var(--font-rajdhani), Rajdhani, sans-serif",
-            fontSize: ".95rem",
-            fontWeight: 600,
-            letterSpacing: "2px",
-            textTransform: "uppercase",
-            clipPath: "polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%)",
-            transition: "border-color .25s, color .25s",
-          }}
-          onMouseEnter={(e) => {
-            const el = e.currentTarget;
-            el.style.borderColor = "#8ab4f8";
-            el.style.color = "#fff";
-          }}
-          onMouseLeave={(e) => {
-            const el = e.currentTarget;
-            el.style.borderColor = "rgba(130,170,255,.3)";
-            el.style.color = "rgba(190,210,255,.8)";
-          }}
-        >
+        <button className="px-7 py-3.25 bg-transparent text-[#3b0f8c] border border-violet-700/35 cursor-pointer font-primary text-[.95rem] font-semibold tracking-[2px] uppercase [clip-path:polygon(8px_0%,100%_0%,calc(100%-8px)_100%,0%_100%)] transition-[border-color,color,background-color] duration-250 hover:border-violet-700 hover:text-violet-700 hover:bg-violet-700/8">
           Ver Servicios
         </button>
       </div>
